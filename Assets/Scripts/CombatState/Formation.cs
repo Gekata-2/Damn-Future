@@ -5,6 +5,7 @@ namespace CombatState
     public class Formation
     {
         private List<UnitContainer> Units { get; set; }
+        private const int MaxSize = 4;
 
         public Formation(List<UnitContainer> units)
         {
@@ -18,7 +19,16 @@ namespace CombatState
                 Units.Add(new UnitContainer
                     { Formation = this, CurrentActions = 0, IsAlive = true, Position = pos, Unit = unit });
             }
+
+            SortUnits();
         }
+
+        public void AddUnit(Unit unit)
+        {
+            int pos = FindFirstVacantPos();
+            if (pos != -1) AddUnit(unit, pos);
+        }
+
 
         public void AddUnit(UnitContainer unitContainer)
         {
@@ -69,6 +79,36 @@ namespace CombatState
                     contains = true;
 
             return contains;
+        }
+
+        private void SortUnits()
+        {
+            Units.Sort((unit1, unit2) =>
+            {
+                if (unit1.Position < unit2.Position)
+                    return 1;
+
+                if (unit1.Position == unit2.Position)
+                    return 0;
+
+                return -1;
+            });
+        }
+
+        private int FindFirstVacantPos()
+        {
+            for (int i = 0; i < MaxSize; i++)
+            {
+                bool isVacant = true;
+                foreach (var unit in Units)
+                    if (unit.Position == i)
+                        isVacant = false;
+
+                if (isVacant)
+                    return i;
+            }
+
+            return -1;
         }
 
         public bool IsFull() => Units.Count > 4;
