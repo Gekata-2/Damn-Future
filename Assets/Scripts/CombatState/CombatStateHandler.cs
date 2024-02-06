@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Abilities;
 using PlayerInput;
 using TMPro;
@@ -8,13 +7,8 @@ using UnityEngine;
 namespace CombatState
 {
     [Serializable]
-  
-
     public class CombatStateHandler : MonoBehaviour
     {
-       
-
-
         [SerializeField] public Unit[] leftUnits = new Unit[4];
         [SerializeField] public Unit[] rightUnits = new Unit[4];
 
@@ -33,7 +27,7 @@ namespace CombatState
         private GameObject Player { set; get; }
         private KeyboardInput _keyboardInput;
         private MouseCombatClicksHandler _mouseInput;
-        
+
         private Unit _selectedUnit;
         private Ability _selectedAbility;
         private ICombatState _currentState;
