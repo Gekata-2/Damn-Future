@@ -2,10 +2,11 @@
 {
     public class UnitContainer
     {
-        private Formation Formation { get; set; }
-        private Unit Unit { get; set; }
-        private int CurrentActions { get; set; }
-        private int Position { get; set; }
-        private bool IsAlive { get; set; }
+        public Formation Formation { get; set; }
+        public Unit Unit { get; set; }
+        
+        public int CurrentActions { get; set; }
+        public int Position { get; set; }
+        public bool IsAlive { get; set; }
     }
 }
