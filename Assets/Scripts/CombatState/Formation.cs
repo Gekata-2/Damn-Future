@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace CombatState
 {
@@ -10,6 +11,14 @@ namespace CombatState
         public Formation(List<UnitContainer> units)
         {
             Units = units;
+            SortUnits();
+        }
+
+        public Formation(List<Unit> units)
+        {
+            Units = new List<UnitContainer>();
+            foreach (var unit in units) AddUnit(unit);
+            SortUnits();
         }
 
         public void AddUnit(Unit unit, int pos)
@@ -38,6 +47,7 @@ namespace CombatState
         public void RemoveUnit(Unit unit)
         {
             if (ContainsUnit(unit)) Units.Remove(GetUnitContainer(unit));
+            SortUnits();
         }
 
         private bool IsPositionVacant(int pos)
@@ -53,13 +63,26 @@ namespace CombatState
             return isVacant;
         }
 
-        private UnitContainer GetUnitContainer(Unit unit)
+        public UnitContainer GetUnitContainer(Unit unit)
         {
             foreach (var unitContainer in Units)
                 if (unitContainer.Unit == unit)
                     return unitContainer;
 
             return null;
+        }
+
+        public bool TryGetUnitContainer(Unit unit, out UnitContainer unitContainer)
+        {
+            foreach (var container in Units)
+                if (container.Unit == unit)
+                {
+                    unitContainer = container;
+                    return true;
+                }
+
+            unitContainer = null;
+            return false;
         }
 
         private Unit GetUnitFromContainer(UnitContainer unitContainer)

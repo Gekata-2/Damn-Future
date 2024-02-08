@@ -9,15 +9,20 @@ namespace CombatState
     [Serializable]
     public class CombatStateHandler : MonoBehaviour
     {
-        [SerializeField] public Unit[] leftUnits = new Unit[4];
-        [SerializeField] public Unit[] rightUnits = new Unit[4];
+        public Formation LeftUnits;
+        public Formation RightUnits;
+
+
+        //
+        // [SerializeField] public Unit[] leftUnits = new Unit[4];
+        // [SerializeField] public Unit[] rightUnits = new Unit[4];
 
         [Header("   Debug   ")] [SerializeField]
         private TextMeshProUGUI stateText;
 
         [SerializeField] private TextMeshProUGUI lastSelectedUnitText;
         [SerializeField] private TextMeshProUGUI selectedAbilityText;
-
+        [SerializeField] private bool loadFromConfig;
 
         public Idle Idle = new();
         public UnitSelected UnitSelected = new();
@@ -28,15 +33,16 @@ namespace CombatState
         private KeyboardInput _keyboardInput;
         private MouseCombatClicksHandler _mouseInput;
 
-        private Unit _selectedUnit;
+        private UnitContainer _selectedUnitContainer;
         private Ability _selectedAbility;
         private ICombatState _currentState;
 
         public event EventHandler<UnitSelectedEventArgs> OnUnitSelected;
+        public event Action OnLoadedFromConfig;
 
         public class UnitSelectedEventArgs : EventArgs
         {
-            public Unit SelectedUnit;
+            public UnitContainer SelectedUnitContainer;
         }
 
 
@@ -50,7 +56,20 @@ namespace CombatState
             if (Player.TryGetComponent(out _keyboardInput))
                 _keyboardInput.OnPlayerAbilityUsed += OnPlayerAbilityUsed;
 
+            if (loadFromConfig) LoadFromConfig();
+
             SwitchState(Idle);
+        }
+
+
+        private void LoadFromConfig()
+        {
+            if (TryGetComponent(out TestBattleConfig testBattleConfig))
+            {
+                LeftUnits = new Formation(testBattleConfig.leftUnits);
+                RightUnits = new Formation(testBattleConfig.rightUnits);
+                OnLoadedFromConfig?.Invoke();
+            }
         }
 
         public void SwitchState(ICombatState state)
@@ -77,19 +96,19 @@ namespace CombatState
         }
 
 
-        public Unit GetSelectedUnit() => _selectedUnit;
+        public UnitContainer GetSelectedUnitContainer() => _selectedUnitContainer;
 
         public void SelectUnit(Unit unit)
         {
-            _selectedUnit = unit;
-            OnUnitSelected?.Invoke(this, new UnitSelectedEventArgs { SelectedUnit = unit });
+            _selectedUnitContainer = FindUnitContainer(unit);
+            OnUnitSelected?.Invoke(this, new UnitSelectedEventArgs { SelectedUnitContainer = _selectedUnitContainer });
             UpdateDebugInfo();
         }
 
         public void CancelSelectedUnit()
         {
-            _selectedUnit = null;
-            OnUnitSelected?.Invoke(this, new UnitSelectedEventArgs { SelectedUnit = null });
+            _selectedUnitContainer = null;
+            OnUnitSelected?.Invoke(this, new UnitSelectedEventArgs { SelectedUnitContainer = null });
             UpdateDebugInfo();
         }
 
@@ -108,22 +127,53 @@ namespace CombatState
             UpdateDebugInfo();
         }
 
-        public Unit[] GetUnitAllies(Unit unit)
+        public Formation GetUnitAllies(UnitContainer unitContainer)
         {
-            return unit.side switch
+            return unitContainer.Side switch
             {
-                Side.Left => leftUnits,
-                Side.Right => rightUnits,
+                Side.Left => LeftUnits,
+                Side.Right => RightUnits,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        public Unit[] GetUnitEnemies(Unit unit)
+        public Formation GetUnitEnemies(UnitContainer unitContainer)
         {
-            return unit.side switch
+            return unitContainer.Side switch
             {
-                Side.Left => rightUnits,
-                Side.Right => leftUnits,
+                Side.Left => RightUnits,
+                Side.Right => LeftUnits,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        public UnitContainer FindUnitContainer(Unit unit)
+        {
+            if (LeftUnits.TryGetUnitContainer(unit, out var unitContainer))
+                return unitContainer;
+
+            if (RightUnits.TryGetUnitContainer(unit, out unitContainer))
+                return unitContainer;
+
+            return null;
+        }
+
+        public Formation GetUnitAllies(Unit unit)
+        {
+            return FindUnitContainer(unit).Side switch
+            {
+                Side.Left => LeftUnits,
+                Side.Right => RightUnits,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        public Formation GetUnitEnemies(Unit unit)
+        {
+            return FindUnitContainer(unit).Side switch
+            {
+                Side.Left => RightUnits,
+                Side.Right => LeftUnits,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -131,7 +181,7 @@ namespace CombatState
         private void UpdateDebugInfo()
         {
             stateText.text = _currentState.GetName();
-            lastSelectedUnitText.text = _selectedUnit == null ? "None" : _selectedUnit.name;
+            //lastSelectedUnitText.text = _selectedUnit == null ? "None" : _selectedUnit.name;
             selectedAbilityText.text = _selectedAbility == null ? "None" : _selectedAbility.Name;
         }
     }

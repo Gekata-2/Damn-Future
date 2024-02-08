@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Abilities;
+using CombatState;
 using UnityEngine;
 
 public enum Side
@@ -11,7 +12,6 @@ public enum Side
 
 public class Unit : MonoBehaviour, IDamageble
 {
-    [SerializeField] public Side side;
     [SerializeField] public List<Ability> abilities;
     [SerializeField] private new string name;
 
@@ -39,14 +39,14 @@ public class Unit : MonoBehaviour, IDamageble
         }
     }
 
-    public void UseTargetAbility(Ability ability, Unit target, Unit[] allUnits)
+    public void UseTargetAbility(Ability ability, Unit target, Formation formation)
     {
-        ability.Use(target, allUnits);
+        // ability.Use(target, allUnits);
     }
 
-    public void UseNonTargetAbility(Ability ability, Unit[] allUnits)
+    public void UseNonTargetAbility(Ability ability, Formation formation)
     {
-        ability.Use(allUnits);
+        // ability.Use(allUnits);
     }
 
     public bool TryGetAbility(int idx, out Ability ability)

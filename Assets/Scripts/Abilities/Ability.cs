@@ -1,4 +1,5 @@
 ﻿using System;
+using CombatState;
 using UnityEngine;
 
 namespace Abilities
@@ -32,12 +33,12 @@ namespace Abilities
         }
 
 
-        public bool CanBeUsed(Unit invoker, Unit target)
+        public bool CanBeUsed(UnitContainer invoker, UnitContainer target)
         {
             bool canBeUsed;
 
-            Side invokerSide = invoker.side;
-            Side targetSide = target.side;
+            Side invokerSide = invoker.Side;
+            Side targetSide = target.Side;
 
             switch (targetedSide)
             {

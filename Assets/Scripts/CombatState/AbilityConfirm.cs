@@ -13,8 +13,8 @@ namespace CombatState
         public void HandleAbilityUse(CombatStateHandler combatStateHandler,
             KeyboardInput.AbilityUsedEventArgs abilityUsedArgs)
         {
-            Unit selectedUnit = combatStateHandler.GetSelectedUnit();
-            
+            Unit selectedUnit = combatStateHandler.GetSelectedUnitContainer().Unit;
+
             if (selectedUnit.TryGetAbility(abilityUsedArgs.AbilityIdx, out Ability ability))
                 combatStateHandler.SelectAbility(ability);
         }
@@ -22,7 +22,7 @@ namespace CombatState
         public void HandleLeftMouseButtonClick(CombatStateHandler combatStateHandler,
             MouseCombatClicksHandler.LeftMouseClickedEventArgs inputEventArgs)
         {
-            Unit selectedUnit = combatStateHandler.GetSelectedUnit();
+            UnitContainer selectedUnitContainer = combatStateHandler.GetSelectedUnitContainer();
             Ability ability = combatStateHandler.GetSelectedAbility();
 
             if (inputEventArgs.RaycastHitUnit == null) // Clicked in empty space
@@ -49,8 +49,10 @@ namespace CombatState
                 switch (ability.type)
                 {
                     case Ability.Type.Target:
-                        if (ability.CanBeUsed(selectedUnit, //Need to check, if second clicked unit,
-                                secondSelectedUnit)) //  is on the side, that ability must be used
+                        if (ability.CanBeUsed(selectedUnitContainer, //Need to check, if second clicked unit,
+                                combatStateHandler
+                                    .FindUnitContainer(
+                                        secondSelectedUnit))) //  is on the side, that ability must be used
                         {
                             UseTargetAbility(combatStateHandler, secondSelectedUnit);
                             combatStateHandler.ResetSelection();
@@ -76,7 +78,7 @@ namespace CombatState
 
         private void UseTargetAbility(CombatStateHandler combatStateHandler, Unit target)
         {
-            Unit invoker = combatStateHandler.GetSelectedUnit();
+            Unit invoker = combatStateHandler.GetSelectedUnitContainer().Unit;
             Ability ability = combatStateHandler.GetSelectedAbility();
 
             switch (ability.targetedSide)
@@ -94,7 +96,7 @@ namespace CombatState
 
         private void UseNonTargetAbility(CombatStateHandler combatStateHandler)
         {
-            Unit invoker = combatStateHandler.GetSelectedUnit();
+            Unit invoker = combatStateHandler.GetSelectedUnitContainer().Unit;
             Ability ability = combatStateHandler.GetSelectedAbility();
 
             if (invoker == null) return;

@@ -5,8 +5,7 @@ namespace CombatState
 {
     public class TestBattleConfig : MonoBehaviour
     {
-        [SerializeField] private bool hasToBeUsed;
-        [SerializeField] private List<Unit> leftUnits;
-        [SerializeField] private List<Unit> rightUnits;
+        [SerializeField] public List<Unit> leftUnits;
+        [SerializeField] public List<Unit> rightUnits;
     }
 }
