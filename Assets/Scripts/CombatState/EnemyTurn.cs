@@ -7,7 +7,9 @@ namespace CombatState
     {
         public void EnterState(CombatStateHandler combatStateHandler)
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Enemy Turn!");
+            combatStateHandler.ResetLeftUnitsActions();
+            combatStateHandler.SwitchState(combatStateHandler.Idle);
         }
 
         public void HandleAbilityUse(CombatStateHandler combatStateHandler,

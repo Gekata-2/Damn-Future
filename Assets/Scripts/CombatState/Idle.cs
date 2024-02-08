@@ -8,6 +8,10 @@ namespace CombatState
     {
         public void EnterState(CombatStateHandler combatStateHandler)
         {
+            if (combatStateHandler.IsAllLeftUnitsPerformedActions())
+            {
+                combatStateHandler.SwitchState(combatStateHandler.EnemyTurn);
+            }
         }
 
         public void HandleAbilityUse(CombatStateHandler combatStateHandler,

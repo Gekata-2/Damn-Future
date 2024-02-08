@@ -6,16 +6,10 @@ using UnityEngine;
 
 namespace CombatState
 {
-    [Serializable]
     public class CombatStateHandler : MonoBehaviour
     {
-        public Formation LeftUnits;
-        public Formation RightUnits;
-
-
-        //
-        // [SerializeField] public Unit[] leftUnits = new Unit[4];
-        // [SerializeField] public Unit[] rightUnits = new Unit[4];
+        [field: SerializeField] private Formation LeftUnits { get; set; }
+        [field: SerializeField] private Formation RightUnits { get; set; }
 
         [Header("   Debug   ")] [SerializeField]
         private TextMeshProUGUI stateText;
@@ -68,6 +62,7 @@ namespace CombatState
             {
                 LeftUnits = new Formation(testBattleConfig.leftUnits, Side.Left);
                 RightUnits = new Formation(testBattleConfig.rightUnits, Side.Right);
+                LeftUnits.ResetActions();
                 OnLoadedFromConfig?.Invoke();
             }
         }
@@ -178,10 +173,16 @@ namespace CombatState
             };
         }
 
+        public void ResetLeftUnitsActions() => LeftUnits.ResetActions();
+        public void ResetRightUnitsActions() => RightUnits.ResetActions();
+
+        public bool IsAllLeftUnitsPerformedActions() => LeftUnits.IsAllUnitsPerformedActions();
+        public bool IsAllRightUnitsPerformedActions() => RightUnits.IsAllUnitsPerformedActions();
+
         private void UpdateDebugInfo()
         {
             stateText.text = _currentState.GetName();
-            //lastSelectedUnitText.text = _selectedUnit == null ? "None" : _selectedUnit.name;
+            lastSelectedUnitText.text = _selectedUnitContainer?.Unit == null ? "None" : _selectedUnitContainer.Unit.name;
             selectedAbilityText.text = _selectedAbility == null ? "None" : _selectedAbility.Name;
         }
     }

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CombatState
 {
+    [Serializable]
     public class Formation
     {
         public List<UnitContainer> Units { get; private set; }
@@ -32,7 +34,7 @@ namespace CombatState
             if (IsPositionVacant(pos) && !IsFull())
                 Units.Add(new UnitContainer
                 {
-                    Formation = this, CurrentActions = 0, IsAlive = true, Position = pos, Unit = unit, Side = _side
+                    Formation = this, ActionsLeft = 0, IsAlive = true, Position = pos, Unit = unit, Side = _side
                 });
 
             SortUnits();
@@ -164,7 +166,18 @@ namespace CombatState
             return -1;
         }
 
+        public void ResetActions()
+        {
+            foreach (var unitContainer in Units) unitContainer.ResetActions();
+        }
+
         public bool IsFull() => Units.Count > 4;
         public bool IsEmpty() => Units.Count == 0;
+
+        public bool IsAllUnitsPerformedActions()
+        {
+            int actionsLeft = Units.Sum(unitContainer => unitContainer.ActionsLeft);
+            return actionsLeft == 0;
+        }
     }
 }

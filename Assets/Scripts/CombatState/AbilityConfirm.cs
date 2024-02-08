@@ -35,6 +35,7 @@ namespace CombatState
                         break;
                     case Ability.Type.NonTarget: // Use ability
                         UseNonTargetAbility(combatStateHandler);
+                        selectedUnitContainer.ActionPerformed();
                         combatStateHandler.ResetSelection();
                         combatStateHandler.SwitchState(combatStateHandler.Idle);
                         break;
@@ -55,6 +56,7 @@ namespace CombatState
                                 secondSelectedUnitContainer)) //  is on the side, that ability must be used
                         {
                             UseTargetAbility(combatStateHandler, secondSelectedUnitContainer);
+                            selectedUnitContainer.ActionPerformed();
                             combatStateHandler.ResetSelection();
                             combatStateHandler.SwitchState(combatStateHandler.Idle);
                         }
@@ -63,6 +65,7 @@ namespace CombatState
                     case Ability.Type.NonTarget
                         : // Use ability. Second clicked unit doesn't matter in non target ability
                         UseNonTargetAbility(combatStateHandler);
+                        selectedUnitContainer.ActionPerformed();
                         combatStateHandler.ResetSelection();
                         combatStateHandler.SwitchState(combatStateHandler.Idle);
                         break;
