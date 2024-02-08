@@ -22,12 +22,12 @@ namespace Abilities
         [SerializeField] public TargetedSide targetedSide;
         [SerializeField] public string Name;
 
-        public virtual void Use(Unit target, Unit[] allUnits)
+        public virtual void Use(UnitContainer target, Formation units)
         {
             Debug.LogError("Default ability should not be used");
         }
 
-        public virtual void Use(Unit[] units)
+        public virtual void Use(Formation units)
         {
             Debug.LogError("Default ability should not be used");
         }

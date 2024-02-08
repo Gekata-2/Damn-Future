@@ -66,8 +66,8 @@ namespace CombatState
         {
             if (TryGetComponent(out TestBattleConfig testBattleConfig))
             {
-                LeftUnits = new Formation(testBattleConfig.leftUnits);
-                RightUnits = new Formation(testBattleConfig.rightUnits);
+                LeftUnits = new Formation(testBattleConfig.leftUnits, Side.Left);
+                RightUnits = new Formation(testBattleConfig.rightUnits, Side.Right);
                 OnLoadedFromConfig?.Invoke();
             }
         }

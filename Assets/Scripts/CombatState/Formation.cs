@@ -5,18 +5,24 @@ namespace CombatState
 {
     public class Formation
     {
-        private List<UnitContainer> Units { get; set; }
+        public List<UnitContainer> Units { get; private set; }
         private const int MaxSize = 4;
+        private Side _side;
 
-        public Formation(List<UnitContainer> units)
+        public Formation(List<UnitContainer> units, Side side)
         {
             Units = units;
+            _side = side;
+
+            foreach (var unitContainer in Units) unitContainer.Side = _side;
+
             SortUnits();
         }
 
-        public Formation(List<Unit> units)
+        public Formation(List<Unit> units, Side side)
         {
             Units = new List<UnitContainer>();
+            _side = side;
             foreach (var unit in units) AddUnit(unit);
             SortUnits();
         }
@@ -24,10 +30,10 @@ namespace CombatState
         public void AddUnit(Unit unit, int pos)
         {
             if (IsPositionVacant(pos) && !IsFull())
-            {
                 Units.Add(new UnitContainer
-                    { Formation = this, CurrentActions = 0, IsAlive = true, Position = pos, Unit = unit });
-            }
+                {
+                    Formation = this, CurrentActions = 0, IsAlive = true, Position = pos, Unit = unit, Side = _side
+                });
 
             SortUnits();
         }
@@ -38,10 +44,25 @@ namespace CombatState
             if (pos != -1) AddUnit(unit, pos);
         }
 
+        public bool TryGetUnitContainer(int pos, out UnitContainer unitContainer)
+        {
+            foreach (var container in Units)
+            {
+                if (container.Position != pos) continue;
+
+                unitContainer = container;
+                return true;
+            }
+
+            unitContainer = null;
+            return false;
+        }
+
 
         public void AddUnit(UnitContainer unitContainer)
         {
             Units.Add(unitContainer);
+            SortUnits();
         }
 
         public void RemoveUnit(Unit unit)
@@ -67,6 +88,15 @@ namespace CombatState
         {
             foreach (var unitContainer in Units)
                 if (unitContainer.Unit == unit)
+                    return unitContainer;
+
+            return null;
+        }
+
+        public UnitContainer GetUnitContainer(int pos)
+        {
+            foreach (var unitContainer in Units)
+                if (unitContainer.Position == pos)
                     return unitContainer;
 
             return null;

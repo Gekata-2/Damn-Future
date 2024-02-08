@@ -1,3 +1,4 @@
+using CombatState;
 using UnityEngine;
 
 namespace Abilities
@@ -7,9 +8,9 @@ namespace Abilities
     {
         [SerializeField] private float heal;
 
-        public override void Use(Unit target, Unit[] allUnits)
+        public override void Use(UnitContainer target, Formation units)
         {
-            target.TakeHeal(heal);
+            target.Unit.TakeHeal(heal);
         }
     }
 }

@@ -9,5 +9,8 @@
         public int CurrentActions { get; set; }
         public int Position { get; set; }
         public bool IsAlive { get; set; }
+
+        public UnitContainer GetLeft() => Formation.GetUnitContainer(Position - 1);
+        public UnitContainer GetRight() => Formation.GetUnitContainer(Position + 1);
     }
 }

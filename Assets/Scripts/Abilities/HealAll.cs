@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CombatState;
+using UnityEngine;
 
 namespace Abilities
 {
@@ -7,17 +8,12 @@ namespace Abilities
     {
         [SerializeField] private float heal;
 
-        public override void Use(Unit[] allUnits)
+        public override void Use(Formation formation)
         {
-            var targets = Targeting.GetAllTargets(allUnits);
-
-            if (targets.FirstTarget != null) targets.FirstTarget.TakeHeal(heal);
-
-            if (targets.SecondTarget != null) targets.SecondTarget.TakeHeal(heal);
-
-            if (targets.ThirdTarget != null) targets.ThirdTarget.TakeHeal(heal);
-
-            if (targets.FourthTarget != null) targets.FourthTarget.TakeHeal(heal);
+            foreach (UnitContainer unitContainer in formation.Units)
+            {
+                unitContainer.Unit.TakeHeal(heal);
+            }
         }
     }
 }

@@ -39,14 +39,14 @@ public class Unit : MonoBehaviour, IDamageble
         }
     }
 
-    public void UseTargetAbility(Ability ability, Unit target, Formation formation)
+    public void UseTargetAbility(Ability ability, UnitContainer target, Formation formation)
     {
-        // ability.Use(target, allUnits);
+        ability.Use(target, formation);
     }
 
     public void UseNonTargetAbility(Ability ability, Formation formation)
     {
-        // ability.Use(allUnits);
+        ability.Use(formation);
     }
 
     public bool TryGetAbility(int idx, out Ability ability)
