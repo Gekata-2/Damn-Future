@@ -8,37 +8,29 @@ namespace CombatState
     {
         public void EnterState(CombatStateHandler combatStateHandler)
         {
+            if (combatStateHandler.LeftUnits.IsEmpty() || combatStateHandler.RightUnits.IsEmpty())
+                combatStateHandler.SwitchState(combatStateHandler.Win);
+
+            if (combatStateHandler.IsAllLeftUnitsPerformedActions())
+                combatStateHandler.SwitchState(combatStateHandler.EnemyTurn);
         }
 
         public void HandleAbilityUse(CombatStateHandler combatStateHandler,
             KeyboardInput.AbilityUsedEventArgs abilityUsedArgs)
         {
-           
         }
 
         public void HandleLeftMouseButtonClick(CombatStateHandler combatStateHandler,
             MouseCombatClicksHandler.LeftMouseClickedEventArgs inputEventArgs)
 
         {
-          
             if (inputEventArgs.RaycastHitUnit == null) // No unit clicked
                 return;
 
             Unit unit = inputEventArgs.RaycastHitUnit;
 
-            switch (unit.side) // Unit clicked
-            {
-                case Side.Left: // Player unit
-                    combatStateHandler.SelectUnit(unit);
-                    combatStateHandler.SwitchState(combatStateHandler.UnitSelected);
-                    break;
-                case Side.Right: // Enemy unit
-                    combatStateHandler.SelectUnit(unit);
-                    combatStateHandler.SwitchState(combatStateHandler.UnitSelected);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            combatStateHandler.SelectUnit(unit);
+            combatStateHandler.SwitchState(combatStateHandler.UnitSelected);
         }
 
         public string GetName() => "Idle";

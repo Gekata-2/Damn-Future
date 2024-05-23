@@ -13,10 +13,11 @@ namespace CombatState
         public void HandleAbilityUse(CombatStateHandler combatStateHandler,
             KeyboardInput.AbilityUsedEventArgs abilityUsedArgs)
         {
-           
-            
-            Unit selectedUnit = combatStateHandler.GetSelectedUnit();
-            
+            if (combatStateHandler.GetSelectedUnitContainer().ActionsLeft == 0)
+                return;
+
+            Unit selectedUnit = combatStateHandler.GetSelectedUnitContainer().Unit;
+
             // if (selectedUnit.side == Side.Enemy)
             //     return;
 
@@ -30,7 +31,6 @@ namespace CombatState
         public void HandleLeftMouseButtonClick(CombatStateHandler combatStateHandler,
             MouseCombatClicksHandler.LeftMouseClickedEventArgs inputEventArgs)
         {
-        
             if (inputEventArgs.RaycastHitUnit == null) // No unit clicked
             {
                 combatStateHandler.CancelSelectedUnit();

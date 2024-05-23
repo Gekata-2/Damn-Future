@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CombatState;
+using UnityEngine;
 
 namespace Abilities
 {
@@ -9,14 +10,11 @@ namespace Abilities
         [SerializeField] private float damageLeft;
         [SerializeField] private float damageRight;
 
-        public override void Use(Unit target, Unit[] allUnits)
+        public override void Use(UnitContainer target, Formation units)
         {
-            var targets = Targeting.GetThreeTargetsMainCenter(target, allUnits);
-
-            targets.MainTarget.TakeDamage(damage);
-
-            targets.LeftTarget?.TakeDamage(damageLeft);
-            targets.RightTarget?.TakeDamage(damageRight);
+            target.Unit.TakeDamage(damage);
+            target.GetLeft()?.Unit.TakeDamage(damageLeft);
+            target.GetRight()?.Unit.TakeDamage(damageRight);
         }
     }
 }

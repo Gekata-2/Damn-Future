@@ -1,4 +1,5 @@
 ﻿using System;
+using CombatState;
 using UnityEngine;
 
 namespace Abilities
@@ -21,23 +22,23 @@ namespace Abilities
         [SerializeField] public TargetedSide targetedSide;
         [SerializeField] public string Name;
 
-        public virtual void Use(Unit target, Unit[] allUnits)
+        public virtual void Use(UnitContainer target, Formation units)
         {
             Debug.LogError("Default ability should not be used");
         }
 
-        public virtual void Use(Unit[] units)
+        public virtual void Use(Formation units)
         {
             Debug.LogError("Default ability should not be used");
         }
 
 
-        public bool CanBeUsed(Unit invoker, Unit target)
+        public bool CanBeUsed(UnitContainer invoker, UnitContainer target)
         {
             bool canBeUsed;
 
-            Side invokerSide = invoker.side;
-            Side targetSide = target.side;
+            Side invokerSide = invoker.Side;
+            Side targetSide = target.Side;
 
             switch (targetedSide)
             {

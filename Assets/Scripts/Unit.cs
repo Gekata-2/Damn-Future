@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Abilities;
+using CombatState;
 using UnityEngine;
 
 public enum Side
@@ -11,7 +12,6 @@ public enum Side
 
 public class Unit : MonoBehaviour, IDamageble
 {
-    [SerializeField] public Side side;
     [SerializeField] public List<Ability> abilities;
     [SerializeField] private new string name;
 
@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour, IDamageble
 
     public event EventHandler<HealthChangedEventArgs> OnHealthChanged;
     public event EventHandler<HealthChangedEventArgs> OnMaximumHealthChanged;
+    public event EventHandler OnDeath;
 
     public class HealthChangedEventArgs : EventArgs
     {
@@ -39,14 +40,14 @@ public class Unit : MonoBehaviour, IDamageble
         }
     }
 
-    public void UseTargetAbility(Ability ability, Unit target, Unit[] allUnits)
+    public void UseTargetAbility(Ability ability, UnitContainer target, Formation formation)
     {
-        ability.Use(target, allUnits);
+        ability.Use(target, formation);
     }
 
-    public void UseNonTargetAbility(Ability ability, Unit[] allUnits)
+    public void UseNonTargetAbility(Ability ability, Formation formation)
     {
-        ability.Use(allUnits);
+        ability.Use(formation);
     }
 
     public bool TryGetAbility(int idx, out Ability ability)
@@ -69,7 +70,7 @@ public class Unit : MonoBehaviour, IDamageble
 
         if (health <= 0)
         {
-            Destroy(gameObject);
+            OnDeath?.Invoke(this, null);
         }
     }
 

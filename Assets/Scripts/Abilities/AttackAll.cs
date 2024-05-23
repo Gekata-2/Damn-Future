@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CombatState;
+using UnityEngine;
 
 namespace Abilities
 {
@@ -7,17 +8,12 @@ namespace Abilities
     {
         [SerializeField] private float damage;
 
-        public override void Use(Unit[] units)
+        public override void Use(Formation formation)
         {
-            var targets = Targeting.GetAllTargets(units);
-
-            if (targets.FirstTarget != null) targets.FirstTarget.TakeDamage(damage);
-
-            if (targets.SecondTarget != null) targets.SecondTarget.TakeDamage(damage);
-
-            if (targets.ThirdTarget != null) targets.ThirdTarget.TakeDamage(damage);
-
-            if (targets.FourthTarget != null) targets.FourthTarget.TakeDamage(damage);
+            foreach (UnitContainer unitContainer in formation.Units)
+            {
+                unitContainer.Unit.TakeDamage(damage);
+            }
         }
     }
 }
