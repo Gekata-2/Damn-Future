@@ -8,8 +8,8 @@ namespace CombatState
 {
     public class CombatStateHandler : MonoBehaviour
     {
-        [field: SerializeField] private Formation LeftUnits { get; set; }
-        [field: SerializeField] private Formation RightUnits { get; set; }
+        [field: SerializeField] public Formation LeftUnits { get; private set; }
+        [field: SerializeField] public Formation RightUnits { get; private set; }
 
         [Header("   Debug   ")] [SerializeField]
         private TextMeshProUGUI stateText;
@@ -22,6 +22,7 @@ namespace CombatState
         public UnitSelected UnitSelected = new();
         public AbilityConfirm AbilityConfirm = new();
         public EnemyTurn EnemyTurn = new();
+        public Win Win = new();
 
         private GameObject Player { set; get; }
         private KeyboardInput _keyboardInput;
@@ -60,8 +61,8 @@ namespace CombatState
         {
             if (TryGetComponent(out TestBattleConfig testBattleConfig))
             {
-                LeftUnits = new Formation(testBattleConfig.leftUnits, Side.Left);
-                RightUnits = new Formation(testBattleConfig.rightUnits, Side.Right);
+                LeftUnits = new Formation(testBattleConfig.leftUnitContainers, Side.Left);
+                RightUnits = new Formation(testBattleConfig.rightUnitContainers, Side.Right);
                 LeftUnits.ResetActions();
                 OnLoadedFromConfig?.Invoke();
             }
@@ -178,11 +179,12 @@ namespace CombatState
 
         public bool IsAllLeftUnitsPerformedActions() => LeftUnits.IsAllUnitsPerformedActions();
         public bool IsAllRightUnitsPerformedActions() => RightUnits.IsAllUnitsPerformedActions();
-
+        
         private void UpdateDebugInfo()
         {
             stateText.text = _currentState.GetName();
-            lastSelectedUnitText.text = _selectedUnitContainer?.Unit == null ? "None" : _selectedUnitContainer.Unit.name;
+            lastSelectedUnitText.text =
+                _selectedUnitContainer?.Unit == null ? "None" : _selectedUnitContainer.Unit.name;
             selectedAbilityText.text = _selectedAbility == null ? "None" : _selectedAbility.Name;
         }
     }

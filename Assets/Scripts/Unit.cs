@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour, IDamageble
 
     public event EventHandler<HealthChangedEventArgs> OnHealthChanged;
     public event EventHandler<HealthChangedEventArgs> OnMaximumHealthChanged;
+    public event EventHandler OnDeath;
 
     public class HealthChangedEventArgs : EventArgs
     {
@@ -69,7 +70,7 @@ public class Unit : MonoBehaviour, IDamageble
 
         if (health <= 0)
         {
-            Destroy(gameObject);
+            OnDeath?.Invoke(this, null);
         }
     }
 

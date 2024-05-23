@@ -15,4 +15,4 @@ MonoBehaviour:
   type: 0
   targetedSide: 1
   Name: Boom
-  damage: 20
+  damage: 60

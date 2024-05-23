@@ -16,7 +16,12 @@ namespace CombatState
             Units = units;
             _side = side;
 
-            foreach (var unitContainer in Units) unitContainer.Side = _side;
+            foreach (var unitContainer in Units)
+            {
+                unitContainer.Side = _side;
+                unitContainer.Formation = this;
+                unitContainer.Unit.OnDeath += OnUnitDeath;
+            }
 
             SortUnits();
         }
@@ -32,13 +37,24 @@ namespace CombatState
         public void AddUnit(Unit unit, int pos)
         {
             if (IsPositionVacant(pos) && !IsFull())
-                Units.Add(new UnitContainer
-                {
-                    Formation = this, ActionsLeft = 0, IsAlive = true, Position = pos, Unit = unit, Side = _side
-                });
+            {
+                Units.Add(new UnitContainer(formation: this, unit: unit, side: _side, actionsLeft: 0, position: pos,
+                    isAlive: true));
+                unit.OnDeath += OnUnitDeath;
+            }
 
             SortUnits();
         }
+
+        private void OnUnitDeath(object sender, EventArgs e)
+        {
+            if (sender is not Unit unit) return;
+            if (!TryGetUnitContainer(unit, out UnitContainer unitContainer)) return;
+
+            unitContainer.OnDeath();
+            RemoveUnit(unit);
+        }
+
 
         public void AddUnit(Unit unit)
         {
